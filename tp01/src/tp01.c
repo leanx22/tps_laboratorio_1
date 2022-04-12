@@ -1,29 +1,45 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "calculosPrecio.h"
 
-
-
-
-void calculoDePrecios(long int pAerolineas, long int pLatam, int km);
 
 int main(void)
 {
 	setbuf(stdout, NULL);
 
-	int kilometros = 0;
-	long int precioAerolineas = 0;
-	long int precioLatam = 0;
+	//Los precios los declare como flotantes ya que podrian contener "centavos".
+	float precioAerolineas = 0;
+	float precioLatam = 0;
+	int kilometros = 1;
 
-	int continuar = 1;
 	int opcionElegida;
+	int continuar = 1;
+
+	int flagOpcion1 = 0;
+	int flagOpcion2 = 0;
+	int flagOpcion3 = 0;
+
+	float aerolineasDebito;
+	float aerolineasCredito;
+	float aerolineasBitCoin;
+	float aerolineasUnitario;
+
+	float latamDebito;
+	float latamCredito;
+	float latamBitCoin;
+	float latamUnitario;
+
+	float diferenciaPrecio;
 
 	//Imprimo el menu mientras que continuar sea = 1
 	do{
+		fflush(stdin);
+		fflush(stdout);
 		//Cada vez que se imprima el menu se va a limpiar lo anterior con el CLS.
 		system("CLS");
 		printf("\n1) Ingresar kilometros: (%d)", kilometros);
-		printf("\n2) Ingresar precio de vuelos: (Aerolineas: %ld, Latam: %ld)", precioAerolineas, precioLatam);
+		printf("\n2) Ingresar precio de vuelos: (Aerolineas: %.2f, Latam: %.2f)", precioAerolineas, precioLatam);
 		printf("\n3) Calcular todos los costos.");
 		printf("\n4) Informar resultados.");
 		printf("\n5) Carga forzada de datos.");
@@ -37,28 +53,93 @@ int main(void)
 		case 1:
 			printf("\nIngrese los kilometros: ");
 			scanf("%d", &kilometros);
-			break;
+			while(kilometros < 1 || kilometros > 36000) //La distancia de Argentina a china (practicamente el destino mas lejano posible) es de 18.887km.
+			{
+				printf("\nERROR, REINGRESE: ");
+				scanf("%d", &kilometros);
+			}
+		flagOpcion1 = 1;
+		break;
 
 		case 2:
-			//Tengo que validar si se cumplio el paso anterior!
-			//Pido los precios y los guardo en sus respectivas variables.
+
 			printf("\nIngrese el precio de Aerolineas: ");
-			scanf("%ld", &precioAerolineas);
+			scanf("%f", &precioAerolineas);
 
 			printf("\nIngrese el precio de Latam: ");
-			scanf("%ld", &precioLatam);
-			break;
+			scanf("%f", &precioLatam);
+
+			while(precioAerolineas < 1 || precioLatam  < 0)
+			{
+				system("CLS");
+				printf("\nLos precios no pueden ser menor a 1, reingreselos correctamente.");
+
+				printf("\nIngrese el precio de Aerolineas: ");
+				scanf("%f", &precioAerolineas);
+
+				printf("\nIngrese el precio de Latam: ");
+				scanf("%f", &precioLatam);
+			}
+		flagOpcion2 = 1;
+		break;
 
 		case 3:
-			//Llamo a mi funcion y le paso como parametros los precios y kilometros ingresados por el user.
-			calculoDePrecios(precioAerolineas, precioLatam, kilometros);
-			//Al salir de la funcion se volvera a ejecutar el bucle ya que esta no toca la VAR continuar (es decir, se vuelve a imprimir el menu).
-			break;
+			//Verifico si el usuario completo los pasos anteriores.
+			if (flagOpcion1 == 1 && flagOpcion2 == 1)
+			{
+				//guardo en las variables todos los resultados de los calculos (que me lo da el return de las funciones).
+				aerolineasDebito = calculoDebito(precioAerolineas);
+				aerolineasCredito = calculoCredito(precioAerolineas);
+				aerolineasBitCoin = pasajeBitcoin(precioAerolineas);
+				aerolineasUnitario = calculoPrecioUnitario(precioAerolineas, kilometros);
+
+				latamDebito = calculoDebito(precioLatam);
+				latamCredito = calculoCredito(precioLatam);
+				latamBitCoin = pasajeBitcoin(precioLatam);
+				latamUnitario = calculoPrecioUnitario(precioLatam, kilometros);
+
+				diferenciaPrecio = calculoDiferencia(precioAerolineas, precioLatam);
+				flagOpcion3 = 1;
+				printf("\n\x1b[32mPRECIOS OK\x1b[0m\n");
+				system("PAUSE");
+			}
+			else
+			{
+				//Si no se realizo la carga de datos anteriores no deja seleccionar la opcion.
+				printf("\n\x1b[31mSE DEBEN COMPLETAR LOS 2 PASOS PREVIOS!\x1b[0m\n");
+				system("PAUSE");
+			}
+		break;
 
 		case 4:
+			//Imprimo todos los resultados que fueron guardados en las variables previamente (en la opcion 3).
+			if(flagOpcion3 == 1)
+			{
+				system("CLS");
+				printf("Resultados Aerolineas: (ingresado: %.2f)", precioAerolineas);
+				printf("\nPagando con DEBITO: %.2f", aerolineasDebito);
+				printf("\nPagando con CREDITO: %.2f", aerolineasCredito);
+				printf("\nPagando en BITCOIN: %.3f", aerolineasBitCoin);
+				printf("\nPrecio por KM: %.2f", aerolineasUnitario);
+
+				printf("\n\nResultados LATAM: (ingresado: %.2f)", precioLatam);
+				printf("\nPagando con DEBITO: %.2f", latamDebito);
+				printf("\nPagando con CREDITO: %.2f", latamCredito);
+				printf("\nPagando en BITCOIN: %.3f", latamBitCoin);
+				printf("\nPrecio por KM: %.2f", latamUnitario);
+
+				printf("\nLa diferencia de precio entre ambos es de: %.2f\n", diferenciaPrecio);
+				system("PAUSE");
+			}
+			else
+			{
+				printf("\n\x1b[31mSE NECESITA EL OK DE LA OPCION 3!\x1b[0m\n");
+				system("PAUSE");
+			}
 			break;
 
 		case 5:
+			cargaForzada();
 			break;
 
 		case 6:
@@ -67,7 +148,7 @@ int main(void)
 			break;
 
 		default:
-			printf("\nERROR!: tal vez ingresaste mal la opcion?\n");
+			printf("\nERROR!: Tal vez ingresaste mal la opcion?\n");
 			system("PAUSE");
 			break;
 
@@ -75,78 +156,5 @@ int main(void)
 	}while(continuar == 1);
 
 	//Esto se ejecuta solo cuando el usuario presiona 6, es decir la var continuar seria 0 y saldria del bucle.
-	system("PAUSE");
 	return 0;
-}
-
-void calculoDePrecios(long int pAerolineas, long int pLatam, int km)
-{
-	int aerolineasDebito;
-	int aerolineasCredito;
-	float aerolineasBitCoin;
-	int aerolineasUnitario;
-
-	int latamDebito;
-	int latamCredito;
-	float latamBitCoin;
-	int latamUnitario;
-
-	int diferenciaPrecio;
-
-	//Igualo la variable al precio que pase en los parametros para luego restarle el porcentaje.
-	aerolineasDebito = pAerolineas;
-	aerolineasDebito -= pAerolineas*10/100;
-
-	//Igualo la variable al precio que pase en los parametros para luego sumarle el porcentaje.
-	aerolineasCredito = pAerolineas;
-	aerolineasCredito += pAerolineas*25/100;
-
-	//Calculo cuanto saldria en BC.
-	aerolineasBitCoin = pAerolineas/4836581.70;
-
-	//Calculo cuanto sale cada km.
-	aerolineasUnitario = pAerolineas/km;
-
-	///////////////////////////////////////////////
-
-	latamDebito = pLatam;
-	latamDebito -= pLatam*10/100;
-
-	latamCredito = pLatam;
-	latamCredito += pLatam*25/100;
-
-	latamBitCoin = pLatam/4836581.70;
-
-	latamUnitario = pLatam/km;
-
-	//Imprimo por pantalla todos los resultados.
-	printf("\nPrecio Aerolineas: %ld", pAerolineas);
-	printf("\nPrecio Aerolineas con tarjeta de debito: %d", aerolineasDebito);
-	printf("\nPrecio Aerolineas con tarjeta de credito: %d", aerolineasCredito);
-	printf("\nPrecio Aerolineas pagando con bitcoin: %.4f", aerolineasBitCoin);
-	printf("\nMostrar Aerolineas precio unitario: %d \n", aerolineasUnitario);
-
-	printf("\nPrecio Latam: %ld", pLatam);
-	printf("\nPrecio Latam con tarjeta de debito: %d", latamDebito);
-	printf("\nPrecio Latam con tarjeta de credito: %d", latamCredito);
-	printf("\nPrecio Latam pagando con bitcoin: %.4f", latamBitCoin);
-	printf("\nMostrar Latam precio unitario: %d \n", latamUnitario);
-
-	//Para sacar la dif de precio: averiguo cual es el precio mayo y le resto el menor.
-	if(pLatam>pAerolineas)
-	{
-		diferenciaPrecio = pLatam-pAerolineas;
-	}
-	else
-	{
-		diferenciaPrecio = pAerolineas-pLatam;
-	}
-
-	//Muestro el resultado.
-	printf("\nLa diferencia de precio es de: %d \n", diferenciaPrecio);
-
-	//PAUSE para que de tiempo a leer al usuario la salida de datos.
-	system("PAUSE");
-
-	//FIN DE LA FUNCION.
 }
