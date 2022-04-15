@@ -9,6 +9,15 @@
 #include <stdlib.h>
 #include "calculosPrecio.h"
 
+void calculoPrecios(float precio, float km, float* debito, float* credito, float* bitcoin, float* unitario)
+{
+	*debito = calculoDebito(precio);
+	*credito = calculoCredito(precio);
+	*bitcoin = pasajeBitcoin(precio);
+	*unitario = calculoPrecioUnitario(precio, km);
+}
+
+
 float calculoDebito(float precio)
 {
 

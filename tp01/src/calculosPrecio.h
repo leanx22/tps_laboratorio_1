@@ -12,6 +12,15 @@
 #define CALCULOSPRECIO_H_
 #endif /* CALCULOSPRECIO_H_ */
 
+/// @param precio Se le da a la funcion el valor del precio del vuelo ingresado.
+/// @param km Se le da a la funcion los kilometros que ingreso el usuario previamente.
+/// @param debito Lugar donde se guardara el resultado del descuento al pagar en Debito.
+/// @param credito Lugar donde se guardara el resultado del interes al pagar en Credito.
+/// @param bitcoin Lugar donde se guardara el pasaje a bitcoin del precio ingresado.
+/// @param unitario Lugar donde se guardara el calculo del precio unitario.
+/// Lo que hace esta funcion es simplemente llamar al resto (menos la de diferencia de precio), como si fuera la funcion padre.
+void calculoPrecios(float precio ,float km, float* debito, float* credito, float* bitcoin, float* unitario);
+
 /// @param Pide un precio para hacer un descuento del 10%.
 /// @return La funcion retornara el resultado de la operacion.
 float calculoDebito(float precio);

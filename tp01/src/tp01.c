@@ -2,6 +2,8 @@
 #include <stdlib.h>
 
 #include "calculosPrecio.h"
+#include "validaciones.h"
+#include "utilidades.h"
 
 
 int main(void)
@@ -11,7 +13,7 @@ int main(void)
 	//Los precios los declare como flotantes ya que podrian contener "centavos".
 	float precioAerolineas = 0;
 	float precioLatam = 0;
-	int kilometros = 1;
+	int kilometros = 0;
 
 	int opcionElegida;
 	int continuar = 1;
@@ -47,58 +49,33 @@ int main(void)
 
 		scanf("%d", &opcionElegida);
 
-
 		switch(opcionElegida)
 		{
 		case 1:
-			printf("\nIngrese los kilometros: ");
-			scanf("%d", &kilometros);
-			while(kilometros < 1 || kilometros > 36000) //La distancia de Argentina a china (practicamente el destino mas lejano posible) es de 18.887km.
-			{
-				printf("\nERROR, REINGRESE: ");
-				scanf("%d", &kilometros);
-			}
-		flagOpcion1 = 1;
+			printf("\nIngrese los kilometros (maximo 35000[Argentina a china 18000km]): ");
+			//Uso mi funcion para pedir datos flotantes, le pongo maximo de 35000 ya que la distancia de viaje mas larga es de Arg a china (18000km)
+			kilometros = pedirValidarFloat(1, 35000);
+			//cambio el flag para saber que el usuario completo esta opcion.
+			flagOpcion1 = 1;
 		break;
 
 		case 2:
-
-			printf("\nIngrese el precio de Aerolineas: ");
-			scanf("%f", &precioAerolineas);
-
-			printf("\nIngrese el precio de Latam: ");
-			scanf("%f", &precioLatam);
-
-			while(precioAerolineas < 1 || precioLatam  < 0)
-			{
-				system("CLS");
-				printf("\nLos precios no pueden ser menor a 1, reingreselos correctamente.");
-
-				printf("\nIngrese el precio de Aerolineas: ");
-				scanf("%f", &precioAerolineas);
-
-				printf("\nIngrese el precio de Latam: ");
-				scanf("%f", &precioLatam);
-			}
-		flagOpcion2 = 1;
+			//Por medio de la funcion pido y valido dos precios que seran guardados en las variables de los parametros.
+			pedirValidarPrecio(&precioAerolineas, &precioLatam);
+			//Cambio el flag para saber que el usuario completo la opcion 2.
+			flagOpcion2 = 1;
 		break;
 
 		case 3:
 			//Verifico si el usuario completo los pasos anteriores.
 			if (flagOpcion1 == 1 && flagOpcion2 == 1)
 			{
-				//guardo en las variables todos los resultados de los calculos (que me lo da el return de las funciones).
-				aerolineasDebito = calculoDebito(precioAerolineas);
-				aerolineasCredito = calculoCredito(precioAerolineas);
-				aerolineasBitCoin = pasajeBitcoin(precioAerolineas);
-				aerolineasUnitario = calculoPrecioUnitario(precioAerolineas, kilometros);
-
-				latamDebito = calculoDebito(precioLatam);
-				latamCredito = calculoCredito(precioLatam);
-				latamBitCoin = pasajeBitcoin(precioLatam);
-				latamUnitario = calculoPrecioUnitario(precioLatam, kilometros);
-
+				//Llamo mis funciones que van a calcular los precios, les paso el valor de precio y kilometros y las direcciones donde debera guardar todos los resultados.
+				calculoPrecios(precioAerolineas, kilometros, &aerolineasDebito, &aerolineasCredito, &aerolineasBitCoin, &aerolineasUnitario);
+				calculoPrecios(precioLatam, kilometros, &latamDebito, &latamCredito, &latamBitCoin, &latamUnitario);
+				//Guardo la diferencia de precio que me va a retornar la funcion.
 				diferenciaPrecio = calculoDiferencia(precioAerolineas, precioLatam);
+				//Cambio el valor del flag para que se le habilite la opcion 4 al usuario.
 				flagOpcion3 = 1;
 				printf("\n\x1b[32mPRECIOS OK\x1b[0m\n");
 				system("PAUSE");
@@ -117,16 +94,10 @@ int main(void)
 			{
 				system("CLS");
 				printf("Resultados Aerolineas: (ingresado: %.2f)", precioAerolineas);
-				printf("\nPagando con DEBITO: %.2f", aerolineasDebito);
-				printf("\nPagando con CREDITO: %.2f", aerolineasCredito);
-				printf("\nPagando en BITCOIN: %.3f", aerolineasBitCoin);
-				printf("\nPrecio por KM: %.2f", aerolineasUnitario);
+				mostrarResultados(&aerolineasDebito, &aerolineasCredito, &aerolineasBitCoin, &aerolineasUnitario);
 
 				printf("\n\nResultados LATAM: (ingresado: %.2f)", precioLatam);
-				printf("\nPagando con DEBITO: %.2f", latamDebito);
-				printf("\nPagando con CREDITO: %.2f", latamCredito);
-				printf("\nPagando en BITCOIN: %.3f", latamBitCoin);
-				printf("\nPrecio por KM: %.2f", latamUnitario);
+				mostrarResultados(&latamDebito, &latamCredito, &latamBitCoin, &latamUnitario);
 
 				printf("\nLa diferencia de precio entre ambos es de: %.2f\n", diferenciaPrecio);
 				system("PAUSE");
@@ -139,22 +110,20 @@ int main(void)
 			break;
 
 		case 5:
-			cargaForzada();
+			cargaForzada(); //La funcion Realiza la carga forzada e imprime los resultados.
 			break;
 
 		case 6:
-			//Al cambiar continuar a 0 sale del bucle.
-			continuar =  0;
+			continuar =  0; //Al cambiar continuar a 0 sale del bucle.
 			break;
 
-		default:
+		default: //Utilizo el default para validar la opcion elegida en el menu, es decir que si no es una opcion valida (entre 1 y 6) va a dar error y pedira que se reingrese.
 			printf("\nERROR!: Tal vez ingresaste mal la opcion?\n");
 			system("PAUSE");
 			break;
 
 		}
 	}while(continuar == 1);
-
-	//Esto se ejecuta solo cuando el usuario presiona 6, es decir la var continuar seria 0 y saldria del bucle.
+	//Cuando el usuario seleccione la opcion 6 se saldra del bucle y el programa finalizara retornando 0.
 	return 0;
 }
