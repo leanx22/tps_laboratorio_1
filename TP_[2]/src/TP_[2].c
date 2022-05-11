@@ -16,7 +16,7 @@
 
 int main(void)
 {
-	int idCounter = 100; //Variable donde se establece el inicio de los Ids y se suma +1 al dar de alta.
+	int idCounter = 100; //Variable donde se establece el inicio de los Ids y se suma +1 al dar de alta..
 
 	ePassenger aPassengers[TAM];
 	initPassengers(aPassengers, TAM); //Inicializo las flag isEmpty en true.
