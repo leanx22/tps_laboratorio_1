@@ -21,11 +21,6 @@ typedef struct
 #define ARRAYPASSENGER_H_
 #endif /* ARRAYPASSENGER_H_ */
 
-/// @brief This function receives the var where the ids counter was saved and adds +1.
-/// @param counter pointer to var where the idCounter is located.
-/// @return returns the generated Id, or -1 if error(NULL).
-int idGenerator(int * counter);
-
 /// @brief this function put the flag isEmpty to TRUE in avery Array position.
 /// @param list Pointer to array of passenger.
 /// @param len Array length.
@@ -46,7 +41,7 @@ int initPassengers(ePassenger* list, int len);
 int addPassenger(ePassenger* list, int len, int id, char name[],
 char lastName[], float price, int passengerType, char flycode[]);
 
-/// @brief Find a passenger by Id and returns the indez position in array.
+/// @brief Find a passenger by Id and returns the index position in array.
 /// @param list Passenger*
 /// @param len int
 /// @param id int
@@ -60,8 +55,17 @@ int findPassengerById(ePassenger*list,int len,int id);
 /// @return Returns (-1) if Error(incorrect lenght/NULL/or cant find passenger) - (0) if OK.
 int removePassenger(ePassenger*list,int len, int id);
 
-
+/// @param list
+/// @param len
+/// @return
 int printPassengers(ePassenger*list, int len);
 
+//No de arrayPassenger.
+/// @param list
+/// @param len
+/// @param idCounter
+/// @return
+int newPassenger(ePassenger*list, int len, int*idCounter);
 
 
+int modifyPassenger(ePassenger*list, int listLen);

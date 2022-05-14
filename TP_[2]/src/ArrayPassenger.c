@@ -8,19 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "ArrayPassenger.h"
-
-int idGenerator(int * counter)
-{
-	int ret = -1;
-
-	if(counter !=NULL)
-	{
-		*counter+=1;
-		ret = *counter;
-	}
-
-	return ret; //A la hora de dar de alta, se verificara si ret en -1, si ese es el caso isEmpty quedara en true y se cancelara la carga para reintentarla.
-}
+#include "utn.h"
 
 int initPassengers(ePassenger* list, int len)
 {
@@ -87,6 +75,8 @@ int findPassengerById(ePassenger*list,int len,int id)
 	int ret=-1;
 
 	if(list != NULL && len>0 && id>=100)
+	{
+		printf("\nSEARCHING...");
 		for(int i=0;i<len;i++)
 		{
 			if(list[i].id == id)
@@ -94,6 +84,7 @@ int findPassengerById(ePassenger*list,int len,int id)
 				ret = i;
 			}
 		}
+	}
 	return ret;
 }
 
@@ -136,4 +127,73 @@ int printPassengers(ePassenger*list, int len)
 	}
 
 	return 0;
+}
+
+//No de array passenger.
+
+int modifyPassenger(ePassenger*list,int listLen)
+{
+	int ret = 0;
+	int idToSearch;
+	int indexValue;
+	int selectedOption;
+	int continueEdit = 1;
+
+	printf("MODIFY PASSENGER");
+	utn_pedirInt(&idToSearch,"\nEnter the passenger ID: ", "\nERROR!",100,2100,3);
+
+	indexValue = findPassengerById(list,listLen,idToSearch);
+	if(indexValue != -1)
+	{
+		while(continueEdit == 1)
+		{
+			printf("\n");
+			printf("\nWHAT DO YOU WANT TO MODIFY?: ");
+			printf("\n(Can not be edited)-->ID: %d", list[indexValue].id);
+			printf("\n1) Name: %s", list[indexValue].name);
+			printf("\n2) Last Name: %s", list[indexValue].lastName);
+			printf("\n3) Price: %.2f", list[indexValue].price);
+			printf("\n4) Flight status: %d", list[indexValue].statusFlight);
+			printf("\n5) Flight Code: %s", list[indexValue].flyCode);
+			printf("\n6) Passenger Type: %d", list[indexValue].passengerType);
+
+			if(utn_pedirInt(&selectedOption,"", "\nERROR!",1,6,3)==0)
+			{
+				switch(selectedOption)
+				{
+				case 1:
+					system("CLS");
+					if(utn_getStr(list[indexValue].name,"\nNew name: ","ERROR!", 51, 5)==0)
+					{
+						printf("\n\x1b[32mCHANGE OK AND SAVED!\x1b[0m");
+						utn_pedirInt(&continueEdit,"\nContinue editing?\n0-NO.\n1-YES.", "\nERROR!",0,1,3);
+					}else
+					{
+						printf("\n\x1b[31mthere was an error!, changes are NOT going to be saved!\x1b[0m");
+						system("PAUSE");
+					}
+					break;
+				case 2:
+					system("CLS");
+					if(utn_getStr(list[indexValue].lastName,"\nNew Last Name: ","ERROR!", 51, 5)==0)
+					{
+						printf("\n\x1b[32mCHANGE OK AND SAVED!\x1b[0m");
+						utn_pedirInt(&continueEdit,"\nContinue editing?\n0-NO.\n1-YES.", "\nERROR!",0,1,3);
+					}else
+					{
+						printf("\n\x1b[31mthere was an error!, changes are NOT going to be saved!\x1b[0m");
+						system("PAUSE");
+					}
+					break;
+
+				}
+
+
+			}
+
+		}
+
+	}
+
+	return ret;
 }
