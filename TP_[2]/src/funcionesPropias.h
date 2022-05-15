@@ -9,6 +9,9 @@
 #define FUNCIONESPROPIAS_H_
 #endif /* FUNCIONESPROPIAS_H_ */
 
+/// @brief funcion simple para mostrar el mismo mensaje de error.
+/// @return
+int failedMessage();
 
 /// @brief This function receives the var where the ids counter was saved and adds +1.
 /// @param counter pointer to var where the idCounter is located.

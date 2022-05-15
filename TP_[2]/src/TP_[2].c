@@ -21,7 +21,7 @@ int main(void)
 {
 	int idCounter = 100; //Variable donde se establece el inicio de los Ids y se suma +1 al dar de alta.
 	int selectedOption;
-
+	int idToSearch;
 
 
 	ePassenger aPassengers[TAM];
@@ -49,11 +49,16 @@ int main(void)
 
 				case 2:
 					modifyPassenger(aPassengers, TAM);
-
 					break;
 
-
 				case 3:
+					if(utn_pedirInt(&idToSearch,"\nEnter the passenger ID: ", "\nERROR! try again!: ",100,2100,3)==0)
+					{
+					removePassenger(aPassengers, TAM, idToSearch);
+					}else{
+						printf("\nError or no more attempts!\n");
+						system("PAUSE");
+					}
 					break;
 
 				case 4:

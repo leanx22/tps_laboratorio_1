@@ -8,8 +8,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include "ArrayPassenger.h"
+#include "funcionesPropias.h"
 #include "utn.h"
 
+//De la consigna:
 int initPassengers(ePassenger* list, int len)
 {
 	int ret = -1;
@@ -91,17 +93,20 @@ int findPassengerById(ePassenger*list,int len,int id)
 int removePassenger(ePassenger*list,int len, int id)
 {
 	int ret = -1;
+	int indexValue;
 
 	if(list != NULL && len>0 && id>=100)
-		for(int i=0;i<len;i++)
-		{
-			if(list[i].id == id)
-			{
-				list[i].isEmpty = 1;
-				ret = 0;
-			}
-		}
+	{
 
+		indexValue = findPassengerById(list,len,id);
+		if(indexValue != -1)
+		{
+			list[indexValue].isEmpty = 1;
+			printf("\nPassenger deleted!.\n");
+			system("PAUSE");
+			ret=0;
+		}
+	}
 	return ret;
 }
 
@@ -129,8 +134,7 @@ int printPassengers(ePassenger*list, int len)
 	return 0;
 }
 
-//No de array passenger.
-
+//No de consigna:
 int modifyPassenger(ePassenger*list,int listLen)
 {
 	int ret = 0;
@@ -140,7 +144,7 @@ int modifyPassenger(ePassenger*list,int listLen)
 	int continueEdit = 1;
 
 	printf("MODIFY PASSENGER");
-	utn_pedirInt(&idToSearch,"\nEnter the passenger ID: ", "\nERROR!",100,2100,3);
+	utn_pedirInt(&idToSearch,"\nEnter the passenger ID: ", "\nERROR! try again!: ",100,2100,3);
 
 	indexValue = findPassengerById(list,listLen,idToSearch);
 	if(indexValue != -1)
@@ -156,6 +160,7 @@ int modifyPassenger(ePassenger*list,int listLen)
 			printf("\n4) Flight status: %d", list[indexValue].statusFlight);
 			printf("\n5) Flight Code: %s", list[indexValue].flyCode);
 			printf("\n6) Passenger Type: %d", list[indexValue].passengerType);
+			printf("\n7) Exit.");
 
 			if(utn_pedirInt(&selectedOption,"", "\nERROR!",1,6,3)==0)
 			{
@@ -185,7 +190,18 @@ int modifyPassenger(ePassenger*list,int listLen)
 						system("PAUSE");
 					}
 					break;
+				case 3:
 
+					break;
+
+				case 4:
+					break;
+				case 5:
+					break;
+				case 6:
+					break;
+				case 7:
+					break;
 				}
 
 
@@ -193,7 +209,78 @@ int modifyPassenger(ePassenger*list,int listLen)
 
 		}
 
+	}else
+	{
+		printf("\nCANT FIND THE PASSENGER!.\n");
+		system("PAUSE");
 	}
 
 	return ret;
+}
+
+int newPassenger(ePassenger*list, int len, int*idCounter)
+{
+	int ret = -1;
+
+	char name[20];
+	char lastName[20];
+	float price;
+	int pType;
+	char fCode[10];
+	int contiinue = 1;
+
+	system("CLS");
+	printf("ADD NEW PASSENGER DATA: ");
+
+	//while(continuee == 1)
+	//{
+	while(contiinue != 0)
+	{
+		if(utn_getStr(name, "\nName: ", "\nERROR: Try again: ",20,3)==-1)
+		{
+			failedMessage();
+			break;
+		}
+
+		if(utn_getStr(lastName, "\nLast name: ", "\nERROR!: NULL or no more tryes",20,3)==-1)
+		{
+			failedMessage();
+			break;
+		}
+
+		if(utn_pedirFloat(&price, "\nEnter price: ", "ERROR!: try again!", 1, 9999999, 3)==-1)
+		{
+			failedMessage();
+			break;
+		}
+
+		if(utn_pedirInt(&pType, "\nEnter passengerType: ", "ERROR!", 0,2, 3)==-1)
+		{
+			failedMessage();
+			break;
+		}
+
+		if(utn_getStr(fCode, "\nEnter Fly code: ", "\nERROR!: NULL or no more tryes",20,3)==-1)
+		{
+			failedMessage();
+			break;
+		}
+
+
+			if(addPassenger(list, len, idGenerator(idCounter), name, lastName,price,pType,fCode)==0)
+			{
+				printf("\x1b[32mNew passenger added OK! \x1b[33mID: %d \x1b[0m", *idCounter);
+				printf("\n");
+				system("PAUSE");
+				ret=0;
+			}else
+			{
+				printf("There was an error trying to save the data or maybe theres no more space!");
+				printf("\n");
+				system("PAUSE");
+			}
+		contiinue = 0;
+	}
+	//Validar si una funcion devuelve algo !=0 cancelar la operacion y que no siga pidiendo datos!
+return ret;
 }
